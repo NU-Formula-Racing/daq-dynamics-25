@@ -22,6 +22,7 @@ class Thermistor {
     float resistance =  ((voltage*_Pot_resis)/(REF_VOLTAGE-voltage));
     float temp = (210 - (22.6 * log(resistance)));
     return temp;
+    
     }
     void Print_Setting(){
         Serial.print("Analog Pin: ");
