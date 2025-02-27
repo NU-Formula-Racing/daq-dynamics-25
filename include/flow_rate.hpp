@@ -1,50 +1,69 @@
 #pragma once
 #include <Arduino.h>
+#include <functional>
 
-volatile int flow_frequency; // Measures flow sensor pulsesunsigned 
+#define MIN_CYCLE_TIME 500 //Test again
 
-int l_min; // Calculated litres/min
-const int flowsensor = GPIO_NUM_23; // Sensor Input
-const int buttonPin = GPIO_NUM_22; // Button Input
-double sum = 0.0;
-int count = 0;
+class FlowRate;
 
-unsigned long currentTime;
-unsigned long cloopTime;
-
-void flow () // Interrupt function
-{
-   flow_frequency++;
+static void isr_flow(void *args) {
+   FlowRate *sensor = (FlowRate *)args;
+   sensor->flow();
 }
 
-void getFlowRate()
+class FlowRate
 {
-      l_min = (flow_frequency / 7.5 / 60 ); //flowrate in L/min
-      flow_frequency = 0; // Resets Counter
+private:
+   volatile unsigned long _flowCounter; // Measures flow sensor pulsesunsigned
+   int _lMin;                           // Calculated litres/min
+   unsigned long _currentTime;
+   unsigned long _loopTime;
+   unsigned long _timeOfLastMeasurement;
+   const int _sensorPin; // Sensor Input
 
-      Serial.print(l_min, DEC); // Print litres/min
+public:
+
+   // void flow_rate_flow(FlowRate *this)
+
+   void flow() // Interrupt function
+   {
+      _flowCounter++;
+   }
+
+   // Creates a Thermistor object who's input is read at "analogPin"
+   FlowRate(int flowsensor) : _sensorPin(flowsensor), _timeOfLastMeasurement(0)
+   {
+      pinMode(flowsensor, INPUT);
+      digitalWrite(flowsensor, HIGH); // Optional Internal Pull-Up
+
+      sei();                                     // Enable interrupts
+
+      attachInterruptArg(digitalPinToInterrupt(flowsensor), isr_flow, (void *)this, RISING);
+   };
+
+   double getFlowRate()
+   {
+      if (_timeOfLastMeasurement - millis() < MIN_CYCLE_TIME)
+      {
+         // we are measuring too early
+         return _lMin;
+      }
+
+      // now we can actually measure it
+      _timeOfLastMeasurement = millis();
+
+      // number of turns ->
+      // turns per second ->
+      // liters per second ->
+      // liters per minute ->
+      unsigned long timeSinceLastMeasurement = _timeOfLastMeasurement - millis();
+
+      double turnsPerSecond = (double)_flowCounter / (double)timeSinceLastMeasurement;
+
+      _lMin = (turnsPerSecond / 7.5 / 60); // flowrate in L/min
+      _flowCounter = 0;                    // Resets Counter
+
+      Serial.print(_lMin, DEC); // Print litres/min
       Serial.println(" L/min");
-}
-
-   void setup()
- {
-   pinMode(flowsensor, INPUT);
-   digitalWrite(flowsensor, HIGH); // Optional Internal Pull-Up
-   Serial.begin(9600);
-   attachInterrupt(flowsensor, flow, RISING); // Setup Interrupt
-   sei(); // Enable interrupts
-   currentTime = millis();
-   cloopTime = currentTime;
-}
-
-void loop ()
-{
-   // currentTime = millis();
-   // // // Every second, calculate and print litres/hour
-   // if(currentTime >= (cloopTime + 1000)) //changed from + 1000
-   // {
-   //    cloopTime = currentTime; // Updates cloopTime
-   //    // Pulse frequency (Hz) = 7.5Q, Q is flow rate in L/min.
-   //    getFlowRate();
-   // }
-}
+   }
+};
