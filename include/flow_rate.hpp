@@ -30,7 +30,7 @@ public:
       _flowCounter++;
    }
 
-   // Creates a Thermistor object who's input is read at "analogPin"
+   // Creates a Flow Rate object who's input is read at "_sensorPin"
    FlowRate(int flowsensor) : _sensorPin(flowsensor), _timeOfLastMeasurement(0)
    {
       pinMode(flowsensor, INPUT);
