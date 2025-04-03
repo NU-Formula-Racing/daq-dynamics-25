@@ -25,6 +25,11 @@ enum HWPin {
     FLOW_0 = GPIO_NUM_19,
     FLOW_1 = GPIO_NUM_23,
 
+    // IMU Pins
+    INT = GPIO_NUM_13,
+    SDA = GPIO_NUM_21,
+    SCL = GPIO_NUM_22,
+
     // Active Aero Pins
     ACTIVE_AERO_0 = GPIO_NUM_25,
     ACTIVE_AERO_1 = GPIO_NUM_26,
@@ -39,14 +44,9 @@ enum HWPin {
     STATUS_CLK = GPIO_NUM_17,
     DATA_CAN_TX = GPIO_NUM_5,
 
-    // NOTE: Not on Altium Schematic
+    // General Pins (don't use directly)
     ESP_RX = GPIO_NUM_3,
     ESP_TX = GPIO_NUM_1,
-
-    // IMU Pins
-    INT = GPIO_NUM_13,
-    SDA = GPIO_NUM_21,
-    SCL = GPIO_NUM_22,
 
 };
 
