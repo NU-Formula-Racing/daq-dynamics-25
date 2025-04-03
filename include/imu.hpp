@@ -22,13 +22,19 @@ class IMU
     float __pitch = 0, __roll = 0;
 
 public:
+    IMU() : __ax(0), __ay(0), __az(0), __gx(0), __gy(0), __gz(0),
+            __AccX(0), __AccY(0), __AccZ(0), __GyroX(0), __GyroY(0), __GyroZ(0),
+            __pitchAcc(0), __rollAcc(0), __pitchGyro(0), __rollGyro(0), __yawGyro(0),
+            __velocityX(0), __velocityY(0), __velocityZ(0),
+            __positionX(0), __positionY(0), __positionZ(0),
+            __alpha(0.2), __pitch(0), __roll(0) {}
 
     std::vector<double> get_position()
     {
         std::vector<double> position = {__positionX, __positionY, __positionZ};
         return position;
     }
-    
+
     void setup_IMU()
     {
         bool result = Wire.setPins(21, 22);
@@ -71,7 +77,6 @@ public:
 
         double velocity = 0.0;
 
-        // Trapezoidal rule integration
         velocity += (acceleration[0] + acceleration[1]) * 0.5 * time_step;
 
         return velocity;
@@ -140,5 +145,4 @@ public:
             delayMicroseconds(10000 - loopTime);
         }
     }
-
 };
