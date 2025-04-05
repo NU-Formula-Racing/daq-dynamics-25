@@ -7,6 +7,7 @@
 #include "thermistor.hpp"
 #include "imu.hpp"
 #include "define.h"
+#include "DAQ_CAN.hpp"
 
 int currentTime;
 int cloopTime; 
@@ -19,12 +20,17 @@ float air_speed_values[7];
 // Flow Rate Objects
 FlowRate flow_rate_object = FlowRate(FLOW_0);
 FlowRate flow_rate_object = FlowRate(FLOW_1);
+float flow_rate_values[1];
+//To be Implemented in the Loop
 
 // Thermistor Objects
 Thermistor thermistor_object = Thermistor(34, 35); 
-
+float coolant_temperature_values[1];
+//To be Implemented in the loop
 
 IMU imu_object = IMU(); // subject to change 
+float imu_values[5];
+//To be Implemented in the loop
 
 void setup() 
 {
@@ -52,4 +58,11 @@ void loop()
       // Fills array with air_speed_values, can acts as a toggle to indicate which lights are on
       air_speed_values[i] = air_speed_objects[i]->readAirspeed();
    }
+
+   // package the values into an array
+   // air_speed_values
+   // coolant_values ..
+
+   updateSignals(air_speed_values, coolant_temperature_values, flow_rate_values);
+   can_bus.Tick();
 }
