@@ -6,18 +6,34 @@
 #include "airspeed.hpp"
 #include "thermistor.hpp"
 #include "imu.hpp"
+#include "define.h"
 
 int currentTime;
 int cloopTime; 
 
-FlowRate flow_rate_object = FlowRate(23);
-AirSpeed air_speed_object = AirSpeed(32);
+//Air Speed Object Setup
+HWPin air_speed_pins[] = {AIR_SPEED_0, AIR_SPEED_1, AIR_SPEED_2, AIR_SPEED_3, AIR_SPEED_4, AIR_SPEED_5, AIR_SPEED_6, AIR_SPEED_7};
+AirSpeed* air_speed_objects[7];
+float air_speed_values[7];
+
+// Flow Rate Objects
+FlowRate flow_rate_object = FlowRate(FLOW_0);
+FlowRate flow_rate_object = FlowRate(FLOW_1);
+
+// Thermistor Objects
 Thermistor thermistor_object = Thermistor(34, 35); 
+
+
 IMU imu_object = IMU(); // subject to change 
 
 void setup() 
 {
-  Serial.begin(9600);
+   Serial.begin(9600);
+    // Initializes each AirSpeed object with the corresponding pin, puts it in array
+   for (int i = 0; i < 7; i++) 
+   {
+      air_speed_objects[i] = new AirSpeed(air_speed_pins[i]); // I feel like this shouldn't be dynamic.
+   }
 }
 
 void loop() 
@@ -29,7 +45,11 @@ void loop()
    if(currentTime >= (cloopTime + 1000)) //changed from + 1000
    {
       cloopTime = currentTime; // Updates cloopTime
-      // Pulse frequency (Hz) = 7.5Q, Q is flow rate in L/min.
-      flow_rate_object.getFlowRate();
+   }
+
+   for (int i = 0; i < 7; i++) 
+   {
+      // Fills array with air_speed_values, can acts as a toggle to indicate which lights are on
+      air_speed_values[i] = air_speed_objects[i]->readAirspeed();
    }
 }
