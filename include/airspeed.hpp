@@ -5,12 +5,13 @@ class AirSpeed
 {
 private:
   const int _sensorPin;
-  double _airspeed;
+  float _airspeed;
   const float _offset = .90; // Voltage at zero pressure 
   const float _scaleFactor = 1000; // Pressure per volt 
   const float _airDensity = 1.225; // Air density in kg/m^3 (standard at sea level)
 
 public:
+  bool _isActive; // Toggle to enable/disable airspeed reading
   // Creates a AirSpeed object who's input is read at "_sensorPin"
   AirSpeed(int pin) : _sensorPin(pin)
   {
