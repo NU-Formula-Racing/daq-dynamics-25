@@ -15,15 +15,13 @@ class FlowRate
 {
 private:
    volatile unsigned long _flowCounter; // Measures flow sensor pulsesunsigned
-   int _lMin;                           // Calculated litres/min
+   float _lMin;                           // Calculated litres/min
    unsigned long _currentTime;
    unsigned long _loopTime;
    unsigned long _timeOfLastMeasurement;
    const int _sensorPin; // Sensor Input
 
 public:
-
-   // void flow_rate_flow(FlowRate *this)
 
    void flow() // Interrupt function
    {
@@ -41,7 +39,7 @@ public:
       attachInterruptArg(digitalPinToInterrupt(flowsensor), isr_flow, (void *)this, RISING);
    };
 
-   double getFlowRate()
+   float getFlowRate()
    {
       if (_timeOfLastMeasurement - millis() < MIN_CYCLE_TIME)
       {
@@ -62,8 +60,6 @@ public:
 
       _lMin = (turnsPerSecond / 7.5 / 60); // flowrate in L/min
       _flowCounter = 0;                    // Resets Counter
-
-      Serial.print(_lMin, DEC); // Print litres/min
-      Serial.println(" L/min");
+      return _lMin;
    }
 };
