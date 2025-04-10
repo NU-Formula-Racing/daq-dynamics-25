@@ -82,7 +82,7 @@ public:
         return velocity;
     }
 
-    void read_IMU()
+    std::array<float, 6> returnAccValues()
     {
         __mpu.getMotion6(&__ax, &__ay, &__az, &__gx, &__gy, &__gz);
         __AccX = (float)__ax / 16384.0;
@@ -91,6 +91,9 @@ public:
         __GyroX = (float)__gx / 131.0;
         __GyroY = (float)__gy / 131.0;
         __GyroZ = (float)__gz / 131.0;
+
+        std::array <float, 6> return_array = {__AccX, __AccY, __AccZ, __GyroX, __GyroY, __GyroZ};
+        return return_array;
     }
     void calculate_pitch_roll()
     {

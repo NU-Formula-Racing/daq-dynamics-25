@@ -23,22 +23,23 @@ float air_speed_values[7];
 FlowRate flow_rate_object_mot = FlowRate(FLOW_0);
 FlowRate flow_rate_object_acc = FlowRate(FLOW_1);
 float flow_rate_values[1];
-//To be Implemented in the Loop
+
 
 // Thermistor Objects
 Thermistor thermistor_object_mot = Thermistor(TEMP_0, pot_resis); 
 Thermistor thermistor_object_acc = Thermistor(TEMP_1, pot_resis); 
 float coolant_temperature_values[1];
-//To be Implemented in the loop
+
 
 IMU imu_object = IMU(); // subject to change 
 float imu_values[5];
-//To be Implemented in the loop
+
 
 void setup() 
 {
    Serial.begin(9600);
     // Initializes each AirSpeed object with the corresponding pin, puts it in array
+   imu_object.setup_IMU(); // has to use pins 21 and 22
    for (int i = 0; i < 7; i++) 
    {
       air_speed_objects[i] = new AirSpeed(air_speed_pins[i]); // I feel like this shouldn't be dynamic.
@@ -47,8 +48,7 @@ void setup()
 
 void loop() 
 {
-   imu_object.setup_IMU(); // has to use pins 21 and 22
-
+   
    currentTime = millis();
    // // Every second, calculate and print litres/hour
    if(currentTime >= (cloopTime + 1000)) //changed from + 1000
@@ -68,13 +68,16 @@ void loop()
       // Fills array with flow_rate_values
       flow_rate_values[0] = flow_rate_object_mot.getFlowRate();
       flow_rate_values[1] = flow_rate_object_acc.getFlowRate();
-   //Accessing the IMU values need to be implemented
+
+   //TODO IMU Velocity and Position
 
    // package the values into arrays
    std::array<float, 8> Air_Speed_Vals = {air_speed_values[0], air_speed_values[1], air_speed_values[2], air_speed_values[3], air_speed_values[4], air_speed_values[5], air_speed_values[6], air_speed_values[7]};
    std::array<float, 2> Coolant_Temperature_Vals = {coolant_temperature_values[0], coolant_temperature_values[1]};
    std::array<float, 2> Flow_Rate_Vals = {flow_rate_values[0], flow_rate_values[1]};
-   std::array<float, 6> IMU_Vals = {imu_values[0], imu_values[1], imu_values[2],imu_values[3],imu_values[4],imu_values[5]};
+   std::array<float, 6> IMU_Vals = imu_object.returnAccValues();
    updateSignals(Air_Speed_Vals, Coolant_Temperature_Vals, Flow_Rate_Vals, IMU_Vals);
    can_bus.Tick();
+
+   
 }
