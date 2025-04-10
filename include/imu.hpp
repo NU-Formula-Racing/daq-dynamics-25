@@ -92,6 +92,16 @@ public:
         __GyroY = (float)__gy / 131.0;
         __GyroZ = (float)__gz / 131.0;
 
+        __accelerationX.push_back(__AccX);
+        __accelerationY.push_back(__AccY);
+        __accelerationZ.push_back(__AccZ);
+        if (__accelerationX.size() > 2)
+        {
+            __accelerationX.erase(__accelerationX.begin());
+            __accelerationY.erase(__accelerationY.begin());
+            __accelerationZ.erase(__accelerationZ.begin());
+        }
+
         std::array <float, 6> return_array = {__AccX, __AccY, __AccZ, __GyroX, __GyroY, __GyroZ};
         return return_array;
     }
