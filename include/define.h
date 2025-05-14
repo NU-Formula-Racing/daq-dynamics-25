@@ -26,9 +26,9 @@ enum HWPin {
     FLOW_1 = GPIO_NUM_23,
 
     // IMU Pins
-    INT = GPIO_NUM_13,
-    SDA = GPIO_NUM_21,
-    SCL = GPIO_NUM_22,
+    IMU_INT = GPIO_NUM_13,
+    IMU_SDA = GPIO_NUM_21,
+    IMU_SCL = GPIO_NUM_22,
 
     // Active Aero Pins
     ACTIVE_AERO_0 = GPIO_NUM_25,
