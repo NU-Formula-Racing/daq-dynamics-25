@@ -1,5 +1,8 @@
-#pragma once
+#ifndef __FLOW_RATE_H__
+#define __FLOW_RATE_H__
+
 #include <Arduino.h>
+#include <define.h>
 
 #include <functional>
 
@@ -12,25 +15,22 @@ static void isr_flow(void *args);
 class FlowRate {
    private:
     volatile unsigned long _flowCounter;  // Measures flow sensor pulsesunsigned
+    const HWPin _sensorPin;               // Sensor Input
     float _lMin;                          // Calculated litres/min
     unsigned long _currentTime;
     unsigned long _loopTime;
     unsigned long _timeOfLastMeasurement;
-    const int _sensorPin;  // Sensor Input
 
    public:
-    void flow()  // Interrupt function
-    {
+    void flow() {
         _flowCounter++;
     }
 
     // Creates a Flow Rate object who's input is read at "_sensorPin"
-    FlowRate(int flowsensor) : _sensorPin(flowsensor), _timeOfLastMeasurement(0) {
+    FlowRate(HWPin flowsensor) : _sensorPin(flowsensor), _timeOfLastMeasurement(0) {
         pinMode(flowsensor, INPUT);
         digitalWrite(flowsensor, HIGH);  // Optional Internal Pull-Up
-
         sei();  // Enable interrupts
-
         // attachInterruptArg(digitalPinToInterrupt(flowsensor), isr_flow, (void *)this, RISING);
     };
 
@@ -61,3 +61,5 @@ static void isr_flow(void *args) {
     FlowRate *sensor = (FlowRate *)args;
     sensor->flow();
 }
+
+#endif  // __FLOW_RATE_H__
