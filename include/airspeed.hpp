@@ -3,7 +3,8 @@
 
 #include <Arduino.h>
 
-#include "define.h"
+#include "util.hpp"
+#include "define.hpp"
 
 class AirSpeed {
    public:
@@ -16,12 +17,11 @@ class AirSpeed {
 
     // calculates and returns airspeed
     float readAirspeed() {
-        double __adcCount = analogRead(_sensorPin);
-        double _voltage = (__adcCount / 4095.0) * 2.5;
+        float pinVoltage = Util::readVoltage(_sensorPin);
+        float pressure = (pinVoltage - _offset) * _scaleFactor;  // Differential pressure in Pa (Pascal)
 
-        float _pressure = (_voltage - _offset) * _scaleFactor;  // Differential pressure in Pa (Pascal)
+        float _airspeed = sqrt((2 * pressure) / _airDensity);  // Airspeed in meters/second
 
-        _airspeed = sqrt((2 * _pressure) / _airDensity);  // Airspeed in meters/second
         if (_airspeed == 0) {
             _offCount += 1;
         }
@@ -40,7 +40,6 @@ class AirSpeed {
     const float _offset = .90;        // Voltage at zero pressure
     const float _scaleFactor = 1000;  // Pressure per volt
     const float _airDensity = 1.225;  // Air density in kg/m^3 (standard at sea level)
-    float _airspeed;
     int _offCount = 0;
 };
 #endif  // __AIRSPEED_H__

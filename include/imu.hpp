@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "define.h"
+#include "define.hpp"
 
 class IMU {
     TwoWire __wire{0};

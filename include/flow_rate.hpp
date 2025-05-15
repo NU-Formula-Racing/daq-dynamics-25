@@ -2,7 +2,7 @@
 #define __FLOW_RATE_H__
 
 #include <Arduino.h>
-#include <define.h>
+#include "define.hpp"
 
 #include <functional>
 

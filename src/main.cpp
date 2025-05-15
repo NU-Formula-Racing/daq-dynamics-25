@@ -4,9 +4,9 @@
 
 #include <vector>
 
-#include "DAQ_CAN.hpp"
+#include "can_interface.hpp"
 #include "airspeed.hpp"
-#include "define.h"
+#include "define.hpp"
 #include "flow_rate.hpp"
 #include "imu.hpp"
 #include "thermistor.hpp"
@@ -30,8 +30,11 @@ std::array<float, 2> coolantTemperatureValues;
 IMU imuObject = IMU();  // subject to change
 std::array<float, 6> imuValues;
 
+CANInterface can;
+
 void setup() {
     Serial.begin(115200);
+    Serial.println("Dynamics board start!");
 
     // imuObject.initialize();
 
@@ -39,6 +42,8 @@ void setup() {
     for (int i = 0; i < 7; i++) {
         airSpeedSensors[i] = new AirSpeed(airSpeedPins[i]);  // I feel like this shouldn't be dynamic.
     }
+
+    can.initialize();
 }
 
 void loop() {
@@ -46,15 +51,25 @@ void loop() {
     for (int i = 0; i < 7; i++) {
         // Fills array with air_speed_values, can acts as a toggle to indicate which lights are on
         airSpeedValues[i] = airSpeedSensors[i]->readAirspeed();
+        Serial.printf("%0.2f m/s | ", airSpeedValues[i]);
     }
+
     // Fills array with temp_values
     coolantTemperatureValues[0] = motorCoolantTherm.readTemperature();
     coolantTemperatureValues[1] = accumulatorCoolantTherm.readTemperature();
+
+    Serial.printf("%0.2f C | 0%.2f C | ", coolantTemperatureValues[0], coolantTemperatureValues[1]);
+
     // Fills array with flow_rate_values
     flowRateValues[0] = motorCoolantFlowRate.getFlowRate();
     flowRateValues[1] = accumulatorCoolantFlowRate.getFlowRate();
+
+    Serial.printf("%0.2f C | 0%.2f C \n", flowRateValues[0], flowRateValues[1]);
+
+
     // imuValues = imuObject.getAccelValues();
 
-    updateSignals(airSpeedValues, coolantTemperatureValues, flowRateValues, imuValues);
-    can_bus.Tick();
+    can.updateSignals(airSpeedValues, coolantTemperatureValues, flowRateValues, imuValues);
+
+    delay(100);
 }
