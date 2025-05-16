@@ -8,6 +8,7 @@ class CANInterface {
 
     void updateSignals(std::array<float, 8> airSpeed, std::array<float, 2> coolantTemperatures, std::array<float, 2> coolantFlowRate, std::array<float, 6> imu_data) {
         can_bus.Tick();
+        timer_group.Tick(millis());
 
         lower_air_speed_0 = airSpeed[0];
         lower_air_speed_1 = airSpeed[1];
@@ -27,10 +28,13 @@ class CANInterface {
         imu_gryo_x = imu_data[3];
         imu_gryo_y = imu_data[4];
         imu_gryo_z = imu_data[5];
+
+        DAQ_Coolant_Flow_Rates.EncodeAndSend();
     }
 
    private:
-    CAN can_bus{};
+    VirtualTimerGroup timer_group;
+    CAN can_bus;
 
     MakeSignedCANSignal(float, 0, 16, 0.1, 0.0) coolant_flow_rates_before_motor_flow_rate {};
     MakeSignedCANSignal(float, 16, 16, 0.1, 0.0) coolant_flow_rates_before_accumulator_flow_rate {};
@@ -56,10 +60,10 @@ class CANInterface {
     MakeSignedCANSignal(float, 32, 16, 0.1, 0.0) upper_air_speed_6 {};
     MakeSignedCANSignal(float, 48, 16, 0.1, 0.0) upper_air_speed_7 {};
 
-    CANTXMessage<2> DAQ_Coolant_Flow_Rates{can_bus, 0x134, 4, 100, coolant_flow_rates_before_motor_flow_rate, coolant_flow_rates_before_accumulator_flow_rate};
-    CANTXMessage<2> DAQ_Coolant_Temps{can_bus, 0x135, 8, 100, coolant_temps_before_motor_temperature, coolant_temps_before_accumulator_temperature};
-    CANTXMessage<3> DAQ_Dynamics_IMU_Acceleration{can_bus, 0x130, 6, 100, imu_acceleration_x, imu_acceleration_y, imu_acceleration_z};
-    CANTXMessage<3> DAQ_Dynamics_IMU_Gryo{can_bus, 0x131, 6, 50, imu_gryo_x, imu_gryo_y, imu_gryo_z};
-    CANTXMessage<4> DAQ_Dynamics_Pitot_Lower{can_bus, 0x132, 8, 100, lower_air_speed_0, lower_air_speed_1, lower_air_speed_2, lower_air_speed_3};
-    CANTXMessage<4> DAQ_Dynamics_Pitot_Upper{can_bus, 0x133, 8, 100, upper_air_speed_4, upper_air_speed_5, upper_air_speed_6, upper_air_speed_7};
+    CANTXMessage<2> DAQ_Coolant_Flow_Rates{can_bus, 0x134, 4, 100, timer_group, coolant_flow_rates_before_motor_flow_rate, coolant_flow_rates_before_accumulator_flow_rate};
+    CANTXMessage<2> DAQ_Coolant_Temps{can_bus, 0x135, 8, 100, timer_group, coolant_temps_before_motor_temperature, coolant_temps_before_accumulator_temperature};
+    CANTXMessage<3> DAQ_Dynamics_IMU_Acceleration{can_bus, 0x130, 6, 100, timer_group, imu_acceleration_x, imu_acceleration_y, imu_acceleration_z};
+    CANTXMessage<3> DAQ_Dynamics_IMU_Gryo{can_bus, 0x131, 6, 50, timer_group, imu_gryo_x, imu_gryo_y, imu_gryo_z};
+    CANTXMessage<4> DAQ_Dynamics_Pitot_Lower{can_bus, 0x132, 8, 100, timer_group, lower_air_speed_0, lower_air_speed_1, lower_air_speed_2, lower_air_speed_3};
+    CANTXMessage<4> DAQ_Dynamics_Pitot_Upper{can_bus, 0x133, 8, 100, timer_group, upper_air_speed_4, upper_air_speed_5, upper_air_speed_6, upper_air_speed_7};
 };
