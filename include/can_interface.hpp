@@ -28,8 +28,6 @@ class CANInterface {
         imu_gryo_x = imu_data[3];
         imu_gryo_y = imu_data[4];
         imu_gryo_z = imu_data[5];
-
-        DAQ_Coolant_Flow_Rates.EncodeAndSend();
     }
 
    private:
