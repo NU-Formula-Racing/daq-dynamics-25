@@ -8,9 +8,28 @@
 class Util {
    public:
     static float readVoltage(HWPin pin) {
-        double reading = analogRead(pin);  // Reference voltage is 3v3 so maximum reading is 3v3 = 4095 in range 0 to 4095
-        if (reading < 1 || reading > 4095) return 0;
-        return -0.000000000000016 * pow(reading, 4) + 0.000000000118171 * pow(reading, 3) - 0.000000301211691 * pow(reading, 2) + 0.001109019271794 * reading + 0.034143524634089;
+        float volts = 0;
+        int adc = 0;
+        long adc_sum = 0;  // must be long to hold a large value
+
+        // read and accumulate the ADC value 10 times
+        for (int i = 0; i < 10; i++) {
+            adc = analogRead(pin);
+            adc_sum = adc_sum + adc;
+        }
+
+        // divide by the number of readings to get the average
+        adc = adc_sum / 10;
+
+        // calculate the voltage using the averaged ADC
+        if (adc > 3000) {
+            volts = 0.0005 * adc + 1.0874;
+        } else {
+            volts = 0.0008 * adc + 0.1372;
+        }
+        // add any voltage scaling here
+        volts = 3.3 * volts / 3.11;
+        return volts;
     }
 
     static bool floatsEqual(float a, float b, float epsilon = 0.01) {

@@ -51,7 +51,7 @@ void loop() {
     for (int i = 0; i < 7; i++) {
         // Fills array with air_speed_values, can acts as a toggle to indicate which lights are on
         airSpeedValues[i] = airSpeedSensors[i]->readAirspeed();
-        Serial.printf("%0.2f m/s (%0.2f V, %0.2f V) | ", airSpeedValues[i], airSpeedSensors[i]->getRawVoltage(), airSpeedSensors[i]->getSensorVoltage());
+        Serial.printf("%0.2f m/s (%0.3f V, %0.2f V) | ", airSpeedValues[i], airSpeedSensors[i]->getRawVoltage(), airSpeedSensors[i]->getSensorVoltage());
     }
 
     // Fills array with temp_values

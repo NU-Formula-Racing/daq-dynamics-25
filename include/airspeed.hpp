@@ -33,8 +33,8 @@ class AirSpeed {
         float pressureDifference = (((sensorVoltage - 0.1 * V_REF)) / ((0.8 * V_REF) / (P_MAX - P_MIN))) + P_MIN;
 
         float velSquared = (2.0 * pressureDifference) / AIR_DENSITY;
-
-        return sqrt(abs(velSquared)) * (velSquared < 0) ? -1.0 : 1.0;
+        // return pressureDifference;
+        return sqrt(abs(velSquared));
     }
 
     float getRawVoltage() {
