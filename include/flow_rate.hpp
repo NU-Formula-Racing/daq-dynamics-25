@@ -25,7 +25,7 @@ private:
 public:
     void flow()
     {
-        _flowCounter++;
+        _flowCounter = _flowCounter + 1;
     }
 
     // Creates a Flow Rate object who's input is read at "_sensorPin"
@@ -34,7 +34,7 @@ public:
         pinMode(flowsensor, INPUT);
         digitalWrite(flowsensor, HIGH); // Optional Internal Pull-Up
         sei();                          // Enable interrupts
-        // attachInterruptArg(digitalPinToInterrupt(flowsensor), isr_flow, (void *)this, RISING);
+        attachInterruptArg(digitalPinToInterrupt(flowsensor), isr_flow, (void *)this, RISING);
     };
 
     float getFlowRate()
