@@ -6,6 +6,7 @@ public:
     void initialize()
     {
         can_bus.Initialize(ICAN::BaudRate::kBaud500K);
+        can_bus.RegisterRXMessage(ECU_Active_Aero_Command);
     }
 
     void updateSignals(std::array<float, 8> airSpeed, std::array<float, 2> coolantTemperatures, std::array<float, 2> coolantFlowRate, std::array<float, 6> imu_data)
@@ -31,6 +32,11 @@ public:
         imu_gryo_x = imu_data[3];
         imu_gryo_y = imu_data[4];
         imu_gryo_z = imu_data[5];
+    }
+
+    bool getActiveAero()
+    {
+        return static_cast<bool>(active_aero_state);
     }
 
 private:
@@ -60,6 +66,11 @@ private:
     MakeSignedCANSignal(float, 16, 16, 0.1, 0.0) upper_air_speed_5 {};
     MakeSignedCANSignal(float, 32, 16, 0.1, 0.0) upper_air_speed_6 {};
     MakeSignedCANSignal(float, 48, 16, 0.1, 0.0) upper_air_speed_7 {};
+
+    MakeSignedCANSignal(bool, 0, 1, 1.0, 0.0) active_aero_state {};
+    MakeSignedCANSignal(int16_t, 1, 16, 1.0, 0.0) active_aero_position {};
+
+    CANRXMessage<2> ECU_Active_Aero_Command{can_bus, 0x208, active_aero_state, active_aero_position};
 
     CANTXMessage<2> DAQ_Coolant_Flow_Rates{can_bus, 0x134, 4, 100, timer_group, coolant_flow_rates_before_motor_flow_rate, coolant_flow_rates_before_accumulator_flow_rate};
     CANTXMessage<2> DAQ_Coolant_Temps{can_bus, 0x135, 8, 100, timer_group, coolant_temps_before_motor_temperature, coolant_temps_before_accumulator_temperature};

@@ -10,6 +10,7 @@
 #include "flow_rate.hpp"
 #include "imu.hpp"
 #include "thermistor.hpp"
+#include "active_aero.hpp"
 
 // Air Speed Object Setup
 std::array<HWPin, 8> airSpeedPins = {AIR_SPEED_0, AIR_SPEED_1, AIR_SPEED_2, AIR_SPEED_3, AIR_SPEED_4, AIR_SPEED_5, AIR_SPEED_6, AIR_SPEED_7};
@@ -30,6 +31,8 @@ std::array<float, 2> coolantTemperatureValues;
 IMU imuObject = IMU(); // subject to change
 std::array<float, 6> imuValues;
 
+ActiveAero aeroObject = ActiveAero();
+
 CANInterface can;
 
 void setup()
@@ -44,6 +47,8 @@ void setup()
     {
         airSpeedSensors[i] = new AirSpeed(airSpeedPins[i]); // I feel like this shouldn't be dynamic.
     }
+
+    aeroObject.initialize();
 
     can.initialize();
 }
@@ -73,6 +78,8 @@ void loop()
     imuValues = imuObject.getAccelValues();
     Serial.printf("x: %0.2f g | y: %0.2f g | z: %0.2f g\n", imuValues.at(0), imuValues.at(1), imuValues.at(2));
     Serial.printf("x: %0.2f deg/s | y: %0.2f deg/s | z: %0.2f deg/s\n", imuValues.at(3), imuValues.at(4), imuValues.at(5));
+
+    aeroObject.commandPWM(can.getActiveAero());
 
     can.updateSignals(airSpeedValues, coolantTemperatureValues, flowRateValues, imuValues);
 
