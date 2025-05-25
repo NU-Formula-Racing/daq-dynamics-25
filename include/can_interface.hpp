@@ -1,12 +1,15 @@
 #include <CAN.h>
 
-class CANInterface {
-   public:
-    void initialize() {
+class CANInterface
+{
+public:
+    void initialize()
+    {
         can_bus.Initialize(ICAN::BaudRate::kBaud500K);
     }
 
-    void updateSignals(std::array<float, 8> airSpeed, std::array<float, 2> coolantTemperatures, std::array<float, 2> coolantFlowRate, std::array<float, 6> imu_data) {
+    void updateSignals(std::array<float, 8> airSpeed, std::array<float, 2> coolantTemperatures, std::array<float, 2> coolantFlowRate, std::array<float, 6> imu_data)
+    {
         can_bus.Tick();
         timer_group.Tick(millis());
 
@@ -30,7 +33,7 @@ class CANInterface {
         imu_gryo_z = imu_data[5];
     }
 
-   private:
+private:
     VirtualTimerGroup timer_group;
     CAN can_bus;
 
