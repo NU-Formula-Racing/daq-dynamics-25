@@ -41,7 +41,7 @@ public:
 
 private:
     VirtualTimerGroup timer_group;
-    CAN can_bus;
+    ESPCAN can_bus{100U, GPIO_NUM_5, GPIO_NUM_4};
 
     MakeSignedCANSignal(float, 0, 16, 0.1, 0.0) coolant_flow_rates_before_motor_flow_rate {};
     MakeSignedCANSignal(float, 16, 16, 0.1, 0.0) coolant_flow_rates_before_accumulator_flow_rate {};

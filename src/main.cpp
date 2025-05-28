@@ -76,8 +76,8 @@ void loop()
     // Serial.printf("%0.2f C | 0%.2f C \n", flowRateValues[0], flowRateValues[1]);
 
     imuValues = imuObject.getAccelValues();
-    Serial.printf("x: %0.2f g | y: %0.2f g | z: %0.2f g\n", imuValues.at(0), imuValues.at(1), imuValues.at(2));
-    Serial.printf("x: %0.2f deg/s | y: %0.2f deg/s | z: %0.2f deg/s\n", imuValues.at(3), imuValues.at(4), imuValues.at(5));
+    // Serial.printf("x: %0.2f g | y: %0.2f g | z: %0.2f g\n", imuValues.at(0), imuValues.at(1), imuValues.at(2));
+    // Serial.printf("x: %0.2f deg/s | y: %0.2f deg/s | z: %0.2f deg/s\n", imuValues.at(3), imuValues.at(4), imuValues.at(5));
 
     aeroObject.commandPWM(can.getActiveAero());
 
